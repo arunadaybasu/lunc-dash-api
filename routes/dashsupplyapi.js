@@ -159,7 +159,7 @@ router.get('/onchain/get-csupply', async function(req, res, next) {
     console.log('Connected successfully to MongoDB Server');
     const db = dbCclient.db(dbName);
     const collection_csupply = db.collection('circulating_supply');
-    const filteredDocs1 = await collection_csupply.find({}).sort( { 'timestamp': -1 } ).limit(10).toArray();
+    const filteredDocs1 = await collection_csupply.find({}).sort( { 'timestamp': -1 } ).limit(50).toArray();
 
     for (var i = 0; i < filteredDocs1.length; i++) {
       resArr1.push([filteredDocs1[i].timestamp, filteredDocs1[i].result]);

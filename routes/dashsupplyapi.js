@@ -132,6 +132,8 @@ router.get('/onchain/get-csupply', async function(req, res, next) {
     "timestamp": moment().valueOf()
   };
 
+  var resArr1 = [];
+
   if (req.query.format == '1') {
 
     // 1 == raw data from db
@@ -140,7 +142,7 @@ router.get('/onchain/get-csupply', async function(req, res, next) {
     console.log('Connected successfully to MongoDB Server');
     const db = dbCclient.db(dbName);
     const collection_csupply = db.collection('circulating_supply');
-    const filteredDocs1 = await collection_csupply.find({}).sort( { 'timestamp': -1 } ).limit(10).toArray();
+    const filteredDocs1 = await collection_csupply.find({}).sort( { 'timestamp': -1 } ).limit(100).toArray();
 
     respjson1 = {
       "status": 200,
@@ -151,18 +153,40 @@ router.get('/onchain/get-csupply', async function(req, res, next) {
   }
   else if (req.query.format == '2') {
 
-    // 1 == foramtted data for apexchats (frontend)
-
-    var resArr1 = [];
+    // 2 == formatted data for apexchats (dashboard)
 
     await dbCclient.connect();
     console.log('Connected successfully to MongoDB Server');
     const db = dbCclient.db(dbName);
     const collection_csupply = db.collection('circulating_supply');
-    const filteredDocs1 = await collection_csupply.find({}).sort( { 'timestamp': -1 } ).limit(50).toArray();
+    const filteredDocs1 = await collection_csupply.find({}).sort( { 'timestamp': -1 } ).limit(100).toArray();
 
     for (var i = 0; i < filteredDocs1.length; i++) {
       resArr1.push([filteredDocs1[i].timestamp, filteredDocs1[i].result]);
+    }
+
+    console.log(resArr1);
+
+    respjson1 = {
+      "status": 200,
+      "result": resArr1,
+      "timestamp": moment().valueOf()
+    };
+
+  }
+  else if (req.query.format == '3') {
+
+    // 3 == formatted data for list (dashboard)
+
+    await dbCclient.connect();
+    console.log('Connected successfully to MongoDB Server');
+    const db = dbCclient.db(dbName);
+    const collection_csupply = db.collection('circulating_supply');
+    const filteredDocs1 = await collection_csupply.find({}).sort( { 'timestamp': -1 } ).limit(100).toArray();
+
+    for (var i = 0; i < filteredDocs1.length; i++) {
+      filteredDocs1[i].timestamp = moment(filteredDocs1[i].timestamp).format('YYYY-MM-DD HH:mm:ss');
+      resArr1.push(filteredDocs1[i]);
     }
 
     console.log(resArr1);

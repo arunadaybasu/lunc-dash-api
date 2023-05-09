@@ -5,6 +5,7 @@ var moment = require('moment');
 const nodeCron = require("node-cron");
 
 const fcdURL = 'https://terra-classic-fcd.publicnode.com/v1/';
+const fcdURLRebels = 'https://fcd.terrarebels.net/';
 
 var res1 = "dashsupplyapi endpoint working";
 let response = null;
@@ -202,6 +203,55 @@ router.get('/onchain/tsupply', function(req, res, next) {
 
 });
 
+router.get('/onchain/community-pool', function(req, res, next) {
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().valueOf()
+  };
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
+
+  new Promise(async (resolve, reject) => {
+
+  try {
+      response = await axios.get(fcdURLRebels + 'cosmos/distribution/v1beta1/community_pool', {
+        // timeout: 50000, // Timeout of 10 seconds
+      });
+    } catch(ex) {
+      response = null;
+      // error
+      console.log(ex);
+      // reject(ex);
+    }
+
+    if (response) {
+
+      console.log(response.data);
+
+      const respjson1 = {
+        "status": 200,
+        "result": response.data,
+        "timestamp": moment().valueOf()
+      };
+
+      // Use connect method to connect to the server
+      await dbCclient.connect();
+      console.log('Connected successfully to MongoDB Server');
+      const db = dbCclient.db(dbName);
+      const collection_community_pool = db.collection('community_pool');
+      // await collection_community_pool.deleteMany({});
+      const insertResult = await collection_community_pool.insertOne(respjson1);
+      console.log('Inserted documents =>', insertResult);
+
+    }
+
+  });
+  
+
+});
+
 router.get('/onchain/cron-csupply', function(req, res, next) {
 
   const json = {
@@ -292,6 +342,59 @@ router.get('/onchain/cron-tsupply', function(req, res, next) {
         const collection_tsupply = db.collection('total_supply');
         // await collection_tsupply.deleteMany({});
         const insertResult = await collection_tsupply.insertOne(respjson1);
+        console.log('Inserted documents =>', insertResult);
+
+      }
+
+    });
+  });
+
+  job.start();
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
+
+});
+
+router.get('/onchain/cron-community-pool', function(req, res, next) {
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().format()
+  };
+
+  const job = nodeCron.schedule("10 */10 * * * *", () => {
+
+    console.log(moment().format());
+
+    new Promise(async (resolve, reject) => {
+
+    try {
+        response = await axios.get(fcdURLRebels + 'cosmos/distribution/v1beta1/community_pool', {});
+      } catch(ex) {
+        response = null;
+        // error
+        console.log(ex);
+        // reject(ex);
+      }
+
+      if (response) {
+
+        // console.log(response);
+
+        const respjson1 = {
+          "status": 200,
+          "result": response.data,
+          "timestamp": moment().valueOf()
+        };
+
+        // Use connect method to connect to the server
+        await dbCclient.connect();
+        console.log('Connected successfully to MongoDB Server');
+        const db = dbCclient.db(dbName);
+        const collection_community_pool = db.collection('community_pool');
+        // await collection_community_pool.deleteMany({});
+        const insertResult = await collection_community_pool.insertOne(respjson1);
         console.log('Inserted documents =>', insertResult);
 
       }

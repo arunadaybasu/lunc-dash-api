@@ -66,16 +66,6 @@ router.get('/onchain/cron-mock', async function(req, res, next) {
 
 router.get('/onchain/get-csupply', async function(req, res, next) {
 
-  await check_pwd(req.query.username, req.query.password);
-
-  if( pswd_valid == 1 ) {
-    console.log("Password Valid");
-  }
-  else if( pswd_valid == 0 ) {
-    console.log("Password Invalid");
-    return;
-  }
-
   console.log(req.query.format);
 
   var respjson1 = {
@@ -158,16 +148,6 @@ router.get('/onchain/get-csupply', async function(req, res, next) {
 
 router.get('/onchain/csupply', async function(req, res, next) {
 
-  await check_pwd(req.query.username, req.query.password);
-
-  if( pswd_valid == 1 ) {
-    console.log("Password Valid");
-  }
-  else if( pswd_valid == 0 ) {
-    console.log("Password Invalid");
-    return;
-  }
-
   const json = {
     "status": 200,
     "timestamp": moment().valueOf()
@@ -217,16 +197,6 @@ router.get('/onchain/csupply', async function(req, res, next) {
 
 router.get('/onchain/tsupply', async function(req, res, next) {
 
-  await check_pwd(req.query.username, req.query.password);
-
-  if( pswd_valid == 1 ) {
-    console.log("Password Valid");
-  }
-  else if( pswd_valid == 0 ) {
-    console.log("Password Invalid");
-    return;
-  }
-
   const json = {
     "status": 200,
     "timestamp": moment().valueOf()
@@ -275,16 +245,6 @@ router.get('/onchain/tsupply', async function(req, res, next) {
 });
 
 router.get('/onchain/community-pool', async function(req, res, next) {
-
-  await check_pwd(req.query.username, req.query.password);
-
-  if( pswd_valid == 1 ) {
-    console.log("Password Valid");
-  }
-  else if( pswd_valid == 0 ) {
-    console.log("Password Invalid");
-    return;
-  }
 
   const json = {
     "status": 200,

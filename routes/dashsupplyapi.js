@@ -30,17 +30,16 @@ async function check_pwd(usrnm, pswd) {
   console.log('Checking Username Password.....');
   const db = dbCclient.db(dbName);
   const collection_csupply = db.collection('credentials');
-  const filteredDocs1 = await collection_csupply.find({
-    "username" : usrnm,
-    "password" : pswd
-  }).toArray();
+  const filteredDocs1 = await collection_csupply.find({"username" : usrnm}).toArray();
+  const filteredDocs2 = await collection_csupply.find({"password" : pswd}).toArray();
 
-  console.log(filteredDocs1);
+  console.log(filteredDocs1.length);
+  console.log(filteredDocs2.length);
 
-  if (filteredDocs1.length == 0)
-    pswd_valid = 0;
-  else
+  if (filteredDocs1.length == 1 && filteredDocs2.length == 1)
     pswd_valid = 1;
+  else
+    pswd_valid = 0;
 
 }
 

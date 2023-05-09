@@ -3,7 +3,6 @@ var router = express.Router();
 const axios = require('axios');
 var moment = require('moment');
 const nodeCron = require("node-cron");
-const si = require('systeminformation');
 
 const fcdURL = 'https://terra-classic-fcd.publicnode.com/v1/';
 
@@ -23,130 +22,10 @@ router.get('/', function(req, res, next) {
 
 });
 
-router.get('/onchain/sysinfo', async function(req, res, next) {
-
-  // IP Check
-  var ip_check;
-  await si.networkInterfaces()
-  .then((data) => {
-    ip_check = data[0].ip4;
-  })
-  .catch(error => console.error(error));
-  console.log(ip_check);
-  if (ip_check != '18.223.229.233')
-    return;
-
-  const json = {
-    "status": 200,
-    "timestamp": moment().valueOf()
-  };
-
-  res.header("Access-Control-Allow-Origin", "*");
-  res.send(json);
-
-});
-
-router.get('/onchain/csupply', function(req, res, next) {
-
-  const json = {
-    "status": 200,
-    "timestamp": moment().valueOf()
-  };
-
-  console.log(moment().valueOf());
-
-  res.header("Access-Control-Allow-Origin", "*");
-  res.send(json);
-
-  new Promise(async (resolve, reject) => {
-
-  try {
-      response = await axios.get(fcdURL + 'circulatingsupply/uluna', {
-        // timeout: 50000, // Timeout of 10 seconds
-      });
-    } catch(ex) {
-      response = null;
-      // error
-      console.log(ex);
-      // reject(ex);
-    }
-
-    if (response) {
-
-      const respjson1 = {
-        "status": 200,
-        "result": response.data,
-        "timestamp": moment().valueOf()
-      };
-
-      // Use connect method to connect to the server
-      await dbCclient.connect();
-      console.log('Connected successfully to MongoDB Server');
-      const db = dbCclient.db(dbName);
-      const collection_csupply = db.collection('circulating_supply');
-      // await collection_csupply.deleteMany({});
-      const insertResult = await collection_csupply.insertOne(respjson1);
-      console.log('Inserted documents =>', insertResult);
-
-    }
-
-  });
-  
-
-});
-
-router.get('/onchain/cron-csupply', function(req, res, next) {
-
-  const json = {
-    "status": 200,
-    "timestamp": moment().format()
-  };
-
-  const job = nodeCron.schedule("0 * * * * *", () => {
-
-    console.log(moment().format());
-
-    new Promise(async (resolve, reject) => {
-
-    try {
-        response = await axios.get(fcdURL + 'circulatingsupply/uluna', {});
-      } catch(ex) {
-        response = null;
-        // error
-        console.log(ex);
-        // reject(ex);
-      }
-
-      if (response) {
-
-        const respjson1 = {
-          "status": 200,
-          "result": response.data,
-          "timestamp": moment().valueOf()
-        };
-
-        // Use connect method to connect to the server
-        await dbCclient.connect();
-        console.log('Connected successfully to MongoDB Server');
-        const db = dbCclient.db(dbName);
-        const collection_csupply = db.collection('circulating_supply');
-        // await collection_csupply.deleteMany({});
-        const insertResult = await collection_csupply.insertOne(respjson1);
-        console.log('Inserted documents =>', insertResult);
-
-      }
-
-    });
-  });
-
-  job.start();
-
-  res.header("Access-Control-Allow-Origin", "*");
-  res.send(json);
-
-});
-
 router.get('/onchain/get-csupply', async function(req, res, next) {
+
+  console.log(req.query.format);
+
   var respjson1 = {
     "status": 200,
     "result": 'Parameter "format" Incorrect. Options = 1,2',
@@ -222,6 +101,208 @@ router.get('/onchain/get-csupply', async function(req, res, next) {
 
   res.header("Access-Control-Allow-Origin", "*");
   res.send(respjson1);
+
+});
+
+router.get('/onchain/csupply', function(req, res, next) {
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().valueOf()
+  };
+
+  console.log(moment().valueOf());
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
+
+  new Promise(async (resolve, reject) => {
+
+  try {
+      response = await axios.get(fcdURL + 'circulatingsupply/uluna', {
+        // timeout: 50000, // Timeout of 10 seconds
+      });
+    } catch(ex) {
+      response = null;
+      // error
+      console.log(ex);
+      // reject(ex);
+    }
+
+    if (response) {
+
+      const respjson1 = {
+        "status": 200,
+        "result": response.data,
+        "timestamp": moment().valueOf()
+      };
+
+      // Use connect method to connect to the server
+      await dbCclient.connect();
+      console.log('Connected successfully to MongoDB Server');
+      const db = dbCclient.db(dbName);
+      const collection_csupply = db.collection('circulating_supply');
+      // await collection_csupply.deleteMany({});
+      const insertResult = await collection_csupply.insertOne(respjson1);
+      console.log('Inserted documents =>', insertResult);
+
+    }
+
+  });
+  
+
+});
+
+router.get('/onchain/tsupply', function(req, res, next) {
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().valueOf()
+  };
+
+  console.log(moment().valueOf());
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
+
+  new Promise(async (resolve, reject) => {
+
+  try {
+      response = await axios.get(fcdURL + 'totalsupply/uluna', {
+        // timeout: 50000, // Timeout of 10 seconds
+      });
+    } catch(ex) {
+      response = null;
+      // error
+      console.log(ex);
+      // reject(ex);
+    }
+
+    if (response) {
+
+      const respjson1 = {
+        "status": 200,
+        "result": response.data,
+        "timestamp": moment().valueOf()
+      };
+
+      // Use connect method to connect to the server
+      await dbCclient.connect();
+      console.log('Connected successfully to MongoDB Server');
+      const db = dbCclient.db(dbName);
+      const collection_tsupply = db.collection('total_supply');
+      // await collection_tsupply.deleteMany({});
+      const insertResult = await collection_tsupply.insertOne(respjson1);
+      console.log('Inserted documents =>', insertResult);
+
+    }
+
+  });
+  
+
+});
+
+router.get('/onchain/cron-csupply', function(req, res, next) {
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().format()
+  };
+
+  const job = nodeCron.schedule("0 * * * * *", () => {
+
+    console.log(moment().format());
+
+    new Promise(async (resolve, reject) => {
+
+    try {
+        response = await axios.get(fcdURL + 'circulatingsupply/uluna', {});
+      } catch(ex) {
+        response = null;
+        // error
+        console.log(ex);
+        // reject(ex);
+      }
+
+      if (response) {
+
+        const respjson1 = {
+          "status": 200,
+          "result": response.data,
+          "timestamp": moment().valueOf()
+        };
+
+        // Use connect method to connect to the server
+        await dbCclient.connect();
+        console.log('Connected successfully to MongoDB Server');
+        const db = dbCclient.db(dbName);
+        const collection_csupply = db.collection('circulating_supply');
+        // await collection_csupply.deleteMany({});
+        const insertResult = await collection_csupply.insertOne(respjson1);
+        console.log('Inserted documents =>', insertResult);
+
+      }
+
+    });
+  });
+
+  job.start();
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
+
+});
+
+router.get('/onchain/cron-tsupply', function(req, res, next) {
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().format()
+  };
+
+  const job = nodeCron.schedule("5 * * * * *", () => {
+
+    console.log(moment().format());
+
+    new Promise(async (resolve, reject) => {
+
+    try {
+        response = await axios.get(fcdURL + 'totalsupply/uluna', {});
+      } catch(ex) {
+        response = null;
+        // error
+        console.log(ex);
+        // reject(ex);
+      }
+
+      if (response) {
+
+        // console.log(response);
+
+        const respjson1 = {
+          "status": 200,
+          "result": response.data,
+          "timestamp": moment().valueOf()
+        };
+
+        // Use connect method to connect to the server
+        await dbCclient.connect();
+        console.log('Connected successfully to MongoDB Server');
+        const db = dbCclient.db(dbName);
+        const collection_tsupply = db.collection('total_supply');
+        // await collection_tsupply.deleteMany({});
+        const insertResult = await collection_tsupply.insertOne(respjson1);
+        console.log('Inserted documents =>', insertResult);
+
+      }
+
+    });
+  });
+
+  job.start();
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
 
 });
 

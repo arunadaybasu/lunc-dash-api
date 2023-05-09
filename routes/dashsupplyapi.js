@@ -3,6 +3,7 @@ var router = express.Router();
 const axios = require('axios');
 var moment = require('moment');
 const nodeCron = require("node-cron");
+const si = require('systeminformation');
 
 const fcdURL = 'https://terra-classic-fcd.publicnode.com/v1/';
 
@@ -19,6 +20,29 @@ const dbName = 'luncdb_onchain';
 router.get('/', function(req, res, next) {
   
   res.send(res1)
+
+});
+
+router.get('/onchain/sysinfo', async function(req, res, next) {
+
+  // IP Check
+  var ip_check;
+  await si.networkInterfaces()
+  .then((data) => {
+    ip_check = data[0].ip4;
+  })
+  .catch(error => console.error(error));
+  console.log(ip_check);
+  if (ip_check != '18.223.229.233')
+    return;
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().valueOf()
+  };
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
 
 });
 
@@ -123,9 +147,6 @@ router.get('/onchain/cron-csupply', function(req, res, next) {
 });
 
 router.get('/onchain/get-csupply', async function(req, res, next) {
-
-  console.log(req.query.format);
-
   var respjson1 = {
     "status": 200,
     "result": 'Parameter "format" Incorrect. Options = 1,2',

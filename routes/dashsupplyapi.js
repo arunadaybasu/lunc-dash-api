@@ -8,6 +8,7 @@ const fcdURL = 'https://terra-classic-fcd.publicnode.com/v1/';
 const fcdURLRebels = 'https://fcd.terrarebels.net/';
 
 var res1 = "dashsupplyapi endpoint working";
+var pswd_valid = 0;
 let response = null;
 
 const { MongoClient } = require('mongodb');
@@ -23,7 +24,58 @@ router.get('/', function(req, res, next) {
 
 });
 
+async function check_pwd(usrnm, pswd) {
+
+  await dbCclient.connect();
+  console.log('Checking Username Password.....');
+  const db = dbCclient.db(dbName);
+  const collection_csupply = db.collection('credentials');
+  const filteredDocs1 = await collection_csupply.find({
+    "username" : usrnm,
+    "password" : pswd
+  }).toArray();
+
+  console.log(filteredDocs1);
+
+  if (filteredDocs1.length == 0)
+    pswd_valid = 0;
+  else
+    pswd_valid = 1;
+
+}
+
+router.get('/onchain/cron-mock', async function(req, res, next) {
+
+  const json = {
+    "status": 200,
+    "timestamp": moment().format()
+  };
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+  }
+
+  res.header("Access-Control-Allow-Origin", "*");
+  res.send(json);
+
+});
+
 router.get('/onchain/get-csupply', async function(req, res, next) {
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+    return;
+  }
 
   console.log(req.query.format);
 
@@ -105,7 +157,17 @@ router.get('/onchain/get-csupply', async function(req, res, next) {
 
 });
 
-router.get('/onchain/csupply', function(req, res, next) {
+router.get('/onchain/csupply', async function(req, res, next) {
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+    return;
+  }
 
   const json = {
     "status": 200,
@@ -154,7 +216,17 @@ router.get('/onchain/csupply', function(req, res, next) {
 
 });
 
-router.get('/onchain/tsupply', function(req, res, next) {
+router.get('/onchain/tsupply', async function(req, res, next) {
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+    return;
+  }
 
   const json = {
     "status": 200,
@@ -203,7 +275,17 @@ router.get('/onchain/tsupply', function(req, res, next) {
 
 });
 
-router.get('/onchain/community-pool', function(req, res, next) {
+router.get('/onchain/community-pool', async function(req, res, next) {
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+    return;
+  }
 
   const json = {
     "status": 200,
@@ -252,7 +334,17 @@ router.get('/onchain/community-pool', function(req, res, next) {
 
 });
 
-router.get('/onchain/cron-csupply', function(req, res, next) {
+router.get('/onchain/cron-csupply', async function(req, res, next) {
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+    return;
+  }
 
   const json = {
     "status": 200,
@@ -303,7 +395,17 @@ router.get('/onchain/cron-csupply', function(req, res, next) {
 
 });
 
-router.get('/onchain/cron-tsupply', function(req, res, next) {
+router.get('/onchain/cron-tsupply', async function(req, res, next) {
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+    return;
+  }
 
   const json = {
     "status": 200,
@@ -356,7 +458,17 @@ router.get('/onchain/cron-tsupply', function(req, res, next) {
 
 });
 
-router.get('/onchain/cron-community-pool', function(req, res, next) {
+router.get('/onchain/cron-community-pool', async function(req, res, next) {
+
+  await check_pwd(req.query.username, req.query.password);
+
+  if( pswd_valid == 1 ) {
+    console.log("Password Valid");
+  }
+  else if( pswd_valid == 0 ) {
+    console.log("Password Invalid");
+    return;
+  }
 
   const json = {
     "status": 200,
